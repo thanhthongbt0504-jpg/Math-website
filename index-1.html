@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Toán 8 • Luyện tập x và y</title>
+  <style>
+    :root { --bg:#0b1020; --panel:#141c31; --panel2:#1c2742; --text:#f2f5ff; --muted:#aab5d0; --accent:#7c9cff; --green:#70e1b0; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:system-ui,-apple-system,Segoe UI,sans-serif; color:var(--text); background:radial-gradient(circle at top right,#263b72 0,#0b1020 45%); min-height:100vh; }
+    header { padding:28px 18px 16px; text-align:center; }
+    header .tag { display:inline-block; border:1px solid #52679f; border-radius:999px; padding:6px 12px; color:#d7e0ff; font-size:13px; }
+    h1 { margin:14px 0 8px; font-size:clamp(26px,5vw,42px); }
+    header p { margin:0 auto; max-width:650px; color:var(--muted); line-height:1.6; }
+    main { max-width:960px; margin:0 auto; padding:16px; display:grid; grid-template-columns: minmax(0,1fr) minmax(0,1.35fr); gap:16px; }
+    .card { background:rgba(20,28,49,.94); border:1px solid #2b3858; border-radius:20px; padding:20px; box-shadow:0 14px 40px #0002; }
+    h2 { margin:0 0 16px; font-size:19px; }
+    label { display:block; color:var(--muted); margin:14px 0 7px; font-size:14px; }
+    select, button { width:100%; border:1px solid #39496f; border-radius:12px; padding:12px 13px; background:var(--panel2); color:var(--text); font:inherit; }
+    button { cursor:pointer; font-weight:650; transition:transform .12s,opacity .12s; }
+    button:hover { transform:translateY(-1px); opacity:.94; }
+    .primary { background:var(--accent); color:#071027; border:0; }
+    .secondary { background:#202d49; }
+    .actions { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:16px; }
+    .question { font-size:clamp(20px,3.5vw,27px); line-height:1.55; background:#0e1629; border:1px solid #2c3a5b; border-radius:16px; padding:20px; margin:12px 0 16px; overflow-wrap:anywhere; }
+    .hint { color:var(--muted); line-height:1.6; font-size:14px; }
+    .answer { border-left:3px solid var(--green); background:#102b2b; border-radius:10px; padding:14px; margin-top:14px; line-height:1.7; }
+    .answer strong { color:var(--green); }
+    .topic-list { display:grid; gap:8px; }
+    .topic-item { border:1px solid #2b3858; padding:10px 12px; border-radius:10px; color:#dbe4ff; font-size:14px; }
+    footer { text-align:center; color:var(--muted); padding:8px 18px 26px; font-size:12px; }
+    @media(max-width:700px) { main { grid-template-columns:1fr; } .card { padding:17px; } }
+  </style>
+</head>
+<body>
+<header>
+  <span class="tag">TOÁN 8 · KẾT NỐI TRI THỨC VỚI CUỘC SỐNG</span>
+  <h1>Phòng luyện tập <span style="color:#91aaff">x & y</span></h1>
+  <p>Luyện các dạng biểu thức đại số, đa thức và bài toán có x, y. Mỗi lần bấm tạo đề mới, câu hỏi sẽ được thay đổi.</p>
+</header>
+<main>
+  <section class="card">
+    <h2>⚙️ Chọn bài luyện</h2>
+    <form method="get" action="/">
+      <label for="topic">Dạng bài</label>
+      <select id="topic" name="topic">
+        {% for key, name in topics.items() %}
+          <option value="{{ key }}" {% if topic == key %}selected{% endif %}>{{ name }}</option>
+        {% endfor %}
+      </select>
+      <label for="level">Mức độ</label>
+      <select id="level" name="level">
+        <option value="easy" {% if level == 'easy' %}selected{% endif %}>Dễ — làm quen</option>
+        <option value="medium" {% if level == 'medium' %}selected{% endif %}>Trung bình</option>
+        <option value="hard" {% if level == 'hard' %}selected{% endif %}>Khó — thử thách</option>
+      </select>
+      <button class="primary" style="margin-top:16px" type="submit">Áp dụng lựa chọn</button>
+    </form>
+    <h2 style="margin-top:24px">📚 Có trong trang</h2>
+    <div class="topic-list">
+      <div class="topic-item">01 · Thu gọn biểu thức</div>
+      <div class="topic-item">02 · Nhân đơn thức với đa thức</div>
+      <div class="topic-item">03 · Nhân hai đa thức</div>
+      <div class="topic-item">04 · Cộng, trừ đa thức</div>
+      <div class="topic-item">05 · Tìm x, y</div>
+    </div>
+    <p class="hint" style="margin-top:14px">Mẹo: làm ra giấy trước, sau đó mới mở đáp án để tự kiểm tra.</p>
+  </section>
+  <section class="card">
+    <h2>✏️ Đề bài của bạn</h2>
+    <div class="question">{{ q.question }}</div>
+    <p class="hint">Hãy trình bày các bước giải vào vở. Khi xong, bấm “Xem đáp án” để đối chiếu.</p>
+    <div class="actions">
+      <a href="/new?topic={{ topic }}&level={{ level }}" style="text-decoration:none"><button type="button" class="secondary">🔄 Tạo đề mới</button></a>
+      <form method="post" style="margin:0">
+        <input type="hidden" name="topic" value="{{ topic }}">
+        <input type="hidden" name="level" value="{{ level }}">
+        <button class="primary" name="action" value="check" type="submit">✓ Xem đáp án</button>
+      </form>
+    </div>
+    {% if show_answer %}
+    <div class="answer">
+      <strong>Đáp án:</strong> {{ q.answer }}<br>
+      <strong>Cách làm:</strong> {{ q.explanation }}
+    </div>
+    {% endif %}
+  </section>
+</main>
+<footer>Trang luyện tập cá nhân · Dùng để ôn tập, không thay thế nội dung chính thức của sách giáo khoa.</footer>
+</body>
+</html>
